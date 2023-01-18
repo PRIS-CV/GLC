@@ -44,3 +44,9 @@ python3 export_images.py --dataroot='./datasets/data_semseg' --phase='train' --s
 
 Now you have the transformed images in `./results/gta2city` that have the similar style information with target real images and have the same semantic information with source synthetic images. So the global consistency is ensured.
 
+## Local Consistency
+### Environments
+Please follow the 'Pre-requisites' and 'Installation' in [ADVENT](https://github.com/valeoai/ADVENT) to install the new environment.
+
+### Datasets
+You need to put the transformed images and the labels of GTA5 in `./data/GTA5/images/` and `./data/GTA5/labels/` and put the images and labels of Cityscapes in `./data/Cityscapes/leftImg8bit/` and `./data/Cityscapes/gtFine`. You can also change the data dir in `./advent/`

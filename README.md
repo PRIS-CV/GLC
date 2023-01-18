@@ -28,16 +28,16 @@ As illustrated in the paper, our code is divided into two parts to achieve globa
 First of all, you need to follow the guidance in [CyCADA](https://github.com/jhoffman/cycada_release) just as PCEDA says. You need to install the packages in `requirements.txt` from CyCADA.
 
 ### Datasets
-Please put [GTA5](https://download.visinf.tu-darmstadt.de/data/from_games/) to the folders "trainA" and put [Cityscapes](https://www.cityscapes-dataset.com/) to the folders "trainB". You can put them in `PCEDA_Phase/datasets/data_semseg/` or other folders if you are willing to change the training command. 
+Please put [GTA5](https://download.visinf.tu-darmstadt.de/data/from_games/) to the folders `trainA` and put [Cityscapes](https://www.cityscapes-dataset.com/) to the folders `trainB`. You can put them in `PCEDA_Phase/datasets/data_semseg/` or other folders if you are willing to change the training command. 
 
 ### Train
-Please go to the folder named "PCEDA_Phase" and execute the following command for training the image transformation just as PCEDA says.
+Please go to the folder named `PCEDA_Phase` and execute the following command for training the image transformation just as PCEDA says.
 ```
 python3 train.py --dataroot='./datasets/data_semseg' --gpu_ids='0' --model='cycle_gan' --display_freq=100 --display_ncols=2 --save_latest_freq=2000 --save_epoch_freq=1 --save_by_iter --niter=5 --niter_decay=15 --batch_size=1 --soft_phase=True --norm='instance' --normGNET='instance' --netG='resnet_9blocks' --display_port=18099 --name='gta2city' --lambda_A=10.0 --lambda_B=10.0 --lambda_identity=5.0 --lambda_P=50000.0 --lr=1e-5 --lrG=5e-5
 ```
 
 ### Exporting transformed images
-First comment out Line 41 in the dataloader "PCEDA_Phase/data/unaligned_dataset.py" to disable cropping and then execute the following command:
+First comment out Line 41 in the dataloader `PCEDA_Phase/data/unaligned_dataset.py` to disable cropping and then execute the following command:
 ```
 python3 export_images.py --dataroot='./datasets/data_semseg' --phase='train' --soft_phase=True --model='cycle_gan' --netG='resnet_9blocks' --norm='instance' --normGNET='instance' --name='gta2city' --load_iter=10000 --num_test=20 --results_dir='./results/gta2city'
 ```
@@ -46,7 +46,23 @@ Now you have the transformed images in `./results/gta2city` that have the simila
 
 ## Local Consistency
 ### Environments
-Please follow the 'Pre-requisites' and 'Installation' in [ADVENT](https://github.com/valeoai/ADVENT) to install the new environment.
+Please follow the 'Pre-requisites', 'Installation' and 'Pre-trained models' in [ADVENT](https://github.com/valeoai/ADVENT) to install the new environment.
 
 ### Datasets
-You need to put the transformed images and the labels of GTA5 in `./data/GTA5/images/` and `./data/GTA5/labels/` and put the images and labels of Cityscapes in `./data/Cityscapes/leftImg8bit/` and `./data/Cityscapes/gtFine`. You can also change the data dir in `./advent/`
+You need to put the transformed images and the labels of GTA5 in `./data/GTA5/images/` and `./data/GTA5/labels/` and put the images and labels of Cityscapes in `./data/Cityscapes/leftImg8bit/` and `./data/Cityscapes/gtFine`. You can also change the data dir in `./advent/domain_adaptation/config.py` to avoid the trouble of moving data.
+
+### Train
+Please go to the folder named `./advent/scripts/` and execute the following command for training the semantic segmentation.
+```
+python train.py --cfg ./configs/advent.yml --tensorboard
+```  
+The logs and snapshots will be stored in `./experiments/`.
+
+### Testing
+To test ADVENT:
+```
+python test.py --cfg ./configs/advent.yml
+```
+
+## Acknowledgements
+This codebase is heavily borrowed from [PCEDA](https://github.com/donglao/PCEDA) and [ADVENT](https://github.com/valeoai/ADVENT).
